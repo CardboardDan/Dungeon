@@ -7,6 +7,9 @@ from random import random
 class DungeonRoom:
     south_wall: bool = False
     east_wall: bool = False
+    entry: bool = False
+    exit: bool = False
+    flooded: bool = False
 
 
 @dataclass
@@ -15,6 +18,7 @@ class DungeonMap:
     width: int
     height: int
     density: float
+    entry: DungeonRoom
 
     def __init__(self, width, height, density):
         self.width = width + 1
@@ -37,6 +41,7 @@ class DungeonMap:
 
             W = '#'
             E = ' '
+            F = '='
             line1 = f'R{r}'
             line2 = f'R{r}'
             n = 0
@@ -50,9 +55,9 @@ class DungeonMap:
                                       self.room_below_has_east_wall(row_index, room_index)
 
                 if room.east_wall:
-                    line1 = line1 + ('' if first_room else str(n)) + W
+                    line1 = line1 + ('' if first_room else (F if room.flooded else E)) + W
                 else:
-                    line1 = line1 + ('' if first_room else str(n)) + E
+                    line1 = line1 + ('' if first_room else (F if room.flooded else E)) + E
 
                 if room.south_wall:
                     line2 = line2 + ('' if first_room else W) + W
@@ -77,10 +82,9 @@ class DungeonMap:
             row[-1].east_wall = True
 
     def make_exits(self):
-        self.rows[-1][-1].south_wall = False
-        self.rows[0][1].south_wall = False
-        self.rows[1][1].east_wall = True
-
+        self.rows[-1][-1].exit = True
+        self.rows[1][1].entry = True
+        self.entry = self.rows[1][1]
     def next_room_has_south_wall(self, row_index, room_index):
         if room_index == len(self.rows[0]) - 1:
             return False
@@ -100,10 +104,30 @@ class DungeonMap:
                 if random() < self.density:
                     room.east_wall = True
 
+    def flood_rooms(self):
+        for g in range(self.width * self.height):
+            self.entry.flooded = True
+            for i in range(1, self.height):
+                row = self.rows[i]
+                for j in range(1, self.width):
+                    room = row[j]
+                    if room.flooded:
+                        if not room.east_wall:
+                            row[j+1].flooded = True
+                        if not room.south_wall:
+                            self.rows[i + 1][j].flooded = True
+                        if not row[j-1].east_wall:
+                            row[j-1].flooded = True
+                        if not self.rows[i-1][j].south_wall:
+                            self.rows[i-1][j].flooded = True
+
 
 if __name__ == '__main__':
     my_map = DungeonMap(width=9, height=5, density=0.5)
     my_map.make_borders()
     my_map.make_exits()
     my_map.make_random_walls()
+    my_map.flood_rooms()
+
     my_map.print()
+
