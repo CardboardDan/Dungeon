@@ -102,7 +102,7 @@ class DungeonMap:
 
 
 if __name__ == '__main__':
-    my_map = DungeonMap(width=9, height=5, density=1.0)
+    my_map = DungeonMap(width=9, height=5, density=0.5)
     my_map.make_borders()
     my_map.make_exits()
     my_map.make_random_walls()
