@@ -21,6 +21,21 @@ def print_exits(map, x, y):
         print("there is a passage to the west")
 
 
+def ask_for_dir():
+    while True:
+        go = input("Where do you want to go? (N, E, S, W) : ")
+        if go == 'n':
+            print("NNNNNN")
+        elif go == "e":
+            print('EEEEEEE')
+        elif go == "s":
+            print('SSSSS')
+        elif go == "w":
+            print('WWWWWWW')
+        else
+            print("Invalid syntax, please make sure you answer is one of the given options and in lowercase")
+
+
 if __name__ == '__main__':
     filename = sys.argv[1]
     file = open(f'maps\\{filename}.map', 'rb')
