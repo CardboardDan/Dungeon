@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from random import random
+from random import random, randint
 
 
 @dataclass
@@ -85,6 +85,7 @@ class DungeonMap:
         self.rows[-1][-1].exit = True
         self.rows[1][1].entry = True
         self.entry = self.rows[1][1]
+
     def next_room_has_south_wall(self, row_index, room_index):
         if room_index == len(self.rows[0]) - 1:
             return False
@@ -112,14 +113,29 @@ class DungeonMap:
                 for j in range(1, self.width):
                     room = row[j]
                     if room.flooded:
-                        if not room.east_wall:
-                            row[j+1].flooded = True
-                        if not room.south_wall:
+                        if not room.east_wall and j < self.width - 1:
+                            row[j + 1].flooded = True
+                        if not room.south_wall and i < self.height - 1:
                             self.rows[i + 1][j].flooded = True
-                        if not row[j-1].east_wall:
-                            row[j-1].flooded = True
-                        if not self.rows[i-1][j].south_wall:
-                            self.rows[i-1][j].flooded = True
+                        if not row[j - 1].east_wall:
+                            row[j - 1].flooded = True
+                        if not self.rows[i - 1][j].south_wall:
+                            self.rows[i - 1][j].flooded = True
+
+    def flood_check(self):
+        while True:
+            if self.rows[-1][-1].flooded:
+                break
+            if randint(1, 2) == 1:
+                h = randint(1, self.height - 1)
+                w = randint(1, self.width - 2)
+                self.rows[h][w].east_wall = False
+                my_map.flood_rooms()
+            else:
+                h = randint(1, self.height - 2)
+                w = randint(1, self.width - 1)
+                self.rows[h][w].south_wall = False
+                my_map.flood_rooms()
 
 
 if __name__ == '__main__':
@@ -128,6 +144,6 @@ if __name__ == '__main__':
     my_map.make_exits()
     my_map.make_random_walls()
     my_map.flood_rooms()
+    my_map.flood_check()
 
     my_map.print()
-
