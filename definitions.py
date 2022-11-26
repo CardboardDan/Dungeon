@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from random import random, randint
 from typing import List
 
+from ansi.colour import fg
+wall_symbols = ["═", "║", "╔", "╗","╝", "╚", "╦", "╩", "╬", "╣", "╠"]
 
 
 @dataclass
@@ -11,6 +13,7 @@ class DungeonRoom:
     entry: bool = False
     exit: bool = False
     flooded: bool = False
+    key: bool = False
 
 
 @dataclass
@@ -40,7 +43,10 @@ class DungeonMap:
         for row_index in range(len(self.rows)):
             row = self.rows[row_index]
 
-            W = '#'
+            W = (fg.brightgray('#'))
+            SW = (fg.brightgray('═'))
+            EW = (fg.brightgray('║'))
+            BRC = (fg.brightgray('║'))
             E = ' '
             F = ' '
             line1 = f'R{r}'
@@ -105,6 +111,9 @@ class DungeonMap:
                     room.south_wall = True
                 if random() < self.density:
                     room.east_wall = True
+
+    def place_key(self):
+        print("h")
 
     def flood_rooms(self):
         for g in range(self.width * self.height):

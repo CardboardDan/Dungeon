@@ -3,6 +3,8 @@ import sys
 from dataclasses import dataclass
 from turtledemo.minimal_hanoi import play
 
+from ansi.colour import fg
+
 from definitions import DungeonMap, DungeonRoom
 
 
@@ -14,16 +16,16 @@ def print_exits(player_map, my_player):
     upward_room = player_map.rows[y - 1][x]
     left_room = player_map.rows[y][x - 1]
     if not room.east_wall:
-        print("there is a passage to the east")
+        print(fg.boldmagenta("there is a passage to the east"))
         exits["e"] = True
     if not room.south_wall:
-        print("there is a passage to the south")
+        print(fg.boldmagenta("there is a passage to the south"))
         exits["s"] = True
     if not upward_room.south_wall:
-        print("there is a passage to the north")
+        print(fg.boldmagenta("there is a passage to the north"))
         exits["n"] = True
     if not left_room.east_wall:
-        print("there is a passage to the west")
+        print(fg.boldmagenta("there is a passage to the west"))
         exits["w"] = True
     return exits
 
@@ -56,23 +58,23 @@ def describe_room(player_map, my_player):
     room = player_map.rows[y][x]
     print(x, y)
     if room.entry:
-        print("you are at the entrance")
+        print(fg.blue("you are at the entrance"))
     elif room.exit:
-        print("you are at the exit, you won!!!!!!!!!")
+        print(fg.boldcyan("you are at the exit, you won!!!!!!!!!"))
     else:
-        print("you are in an empty room.")
+        print(fg.gray("you are in an empty room."))
 
 
 def ask_for_action():
-    action = input("What do you want to do? : ")
+    action = input(fg.boldgreen("What do you want to do?: "))
     action = action.lower()
     return action
 
 
 def print_message(message):
-    print("*" * len(message))
-    print(message)
-    print("*" * len(message))
+    print(fg.green("*") * len(message))
+    print(fg.red(message))
+    print(fg.green("*") * len(message))
     print()
 
 def validate_action(action, my_map, my_player, exits):
